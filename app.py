@@ -21,7 +21,7 @@ def index():
             # ---- TEXT ANALYSIS (Jungian) ----
             response = client.responses.create(
                 model="gpt-4.1",
-                messages=[
+                input=[
                     {
                         "role": "developer",
                         "content": (
