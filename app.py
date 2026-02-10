@@ -40,11 +40,11 @@ def index():
             analysis = response.output[0].content[0].text
 
             # ---- IMAGE GENERATION ----
-            img = client.images.generate(
+            iimg = client.images.generate(
             model="gpt-image-1-mini",
             prompt=f"Dream visualization, surreal, symbolic, Jungian imagery: {dream_text}",
             n=1,
-            size="1024x1024"
+            size="auto"
             )
 
             image_bytes = base64.b64decode(img.data[0].b64_json)
