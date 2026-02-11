@@ -18,17 +18,17 @@ def index():
         dream_text = request.form["prompt"]
 
         try:
-            # ---- TEXT ANALYSIS (Jungian) ----
+            # ---- TEXT ANALYSIS (Jungian Interpretation) ----
             response = client.responses.create(
                 model="gpt-4.1",
                 input=[
                     {
                         "role": "developer",
                         "content": (
-                            "You are a Jungian psychoanalyst. "
-                            "Interpret the dream according to Jung’s symbols, archetypes, "
-                            "shadow, anima/animus, and individuation. "
-                            "Explain the meaning clearly and helpfully."
+                            "You are a Jungian psychoanalyst. Interpret the dream using "
+                            "Jung’s theories: archetypes, shadow, anima/animus, symbols, "
+                            "collective unconscious, and individuation. Provide a clear, "
+                            "helpful explanation."
                         )
                     },
                     {"role": "user", "content": dream_text}
@@ -40,14 +40,13 @@ def index():
             analysis = response.output[0].content[0].text
 
             # ---- IMAGE GENERATION ----
-            iimg = client.images.generate(
-            model="gpt-image-1-mini",
-            prompt=f"Dream visualization, surreal, symbolic, Jungian imagery: {dream_text}",
-            n=1,
-            size="auto"
+            img = client.images.generate(
+                model="gpt-image-1-mini",
+                prompt=f"Dream visualization, surreal, symbolic, Jungian imagery: {dream_text}",
+                size="auto"
             )
 
-            image_bytes = base64.b64decode(img.data[0].b64_json)
+            # Image returned as base64 → embed directly in HTML
             image_data = "data:image/png;base64," + img.data[0].b64_json
 
         except Exception as e:
