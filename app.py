@@ -40,8 +40,9 @@ def index():
         except Exception as e:
             analysis = f"Text analysis failed: {e}"
 
-        # ---- IMAGE GENERATION ----
+        # ---- IMAGE GENERATION (optional) ----
         try:
+            # Only small size for Render Free Tier
             img = client.images.generate(
                 model="gpt-image-1-mini",
                 prompt=f"Dream visualization, surreal, symbolic, Jungian imagery: {dream_text}",
@@ -49,7 +50,7 @@ def index():
             )
             image_data = "data:image/png;base64," + img.data[0].b64_json
         except Exception:
-            image_data = None  # skip image if generation fails
+            image_data = None  # Skip if memory fails
 
     return render_template("index.html", result=analysis, image=image_data)
 
