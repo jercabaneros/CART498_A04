@@ -2,7 +2,6 @@ from flask import Flask, render_template, request
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-import base64
 
 load_dotenv()
 
@@ -18,45 +17,53 @@ def index():
     if request.method == "POST":
         dream_text = request.form.get("prompt", "")
 
-        # ---- TEXT ANALYSIS ----
+        # ---- TEXT ANALYSIS (FIXED) ----
         try:
-            response = client.responses.create(
-                model="gpt-4.1",
-                input=[
+            response = client.chat.completions.create(
+                model="gpt-4",  # FIXED: Correct model name
+                messages=[
                     {
                         "role": "system",
                         "content": (
                             "You are a Jungian psychoanalyst. Interpret the dream using "
-                            "Jung’s theories: archetypes, shadow, anima/animus, symbols, "
-                            "the collective unconscious, and individuation."
+                            "Jung's theories: archetypes, shadow, anima/animus, symbols, "
+                            "the collective unconscious, and individuation. "
+                            "Provide a thoughtful interpretation in 200-300 words."
                         )
                     },
                     {"role": "user", "content": dream_text}
                 ],
-                max_output_tokens=300,
-                temperature=0.9
+                max_tokens=400,  # FIXED: Correct parameter name
+                temperature=0.7
             )
 
-            # EXTRACT TEXT SAFELY
-            analysis = response.output_text
+            # FIXED: Correct way to extract text
+            analysis = response.choices[0].message.content
 
         except Exception as e:
             analysis = f"Text analysis failed: {e}"
+            print(f"Text error: {e}")
 
-        # ---- IMAGE GENERATION ----
+        # ---- IMAGE GENERATION (FIXED) ----
         try:
-            img = client.images.generate(
-                model="gpt-image-1",     # FIXED MODEL (valid)
-                prompt=f"Surreal symbolic Jungian dream imagery: {dream_text}",
-                size="256x256"           # Render-friendly
+            # Create a more detailed prompt for better images
+            image_prompt = f"Create a surreal, dreamlike, symbolic artistic representation of this dream in the style of Jungian psychology: {dream_text[:500]}. Dreamlike, symbolic, archetypal imagery with rich symbolism. Mystical, cosmic, constellation-like elements."
+            
+            img_response = client.images.generate(
+                model="dall-e-3",  # FIXED: Use dall-e-3 (gpt-image-1 may not be available)
+                prompt=image_prompt,
+                size="1024x1024",  # Better quality
+                quality="standard",
+                n=1,
+                response_format="b64_json"  # Get base64 directly
             )
 
-            # Extract Base64
-            image_base64 = img.data[0].b64_json
+            # FIXED: Extract Base64 correctly
+            image_base64 = img_response.data[0].b64_json
             image_data = f"data:image/png;base64,{image_base64}"
 
         except Exception as e:
-            print("Image generation failed:", e)
+            print(f"Image generation failed: {e}")
             image_data = None
 
     return render_template(

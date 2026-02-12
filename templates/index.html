@@ -2,107 +2,104 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Neo-Brutalist Dream Visualizer</title>
+    <title>✨ Jungian Dream Visualizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <style>
-      body {
-        background: #f2f2f2;
-        font-family: "Arial Black", Arial, sans-serif;
-        padding: 0;
-        margin: 0;
-        text-align: center;
-        color: #111;
-      }
-
-      .container {
-        width: 90%;
-        max-width: 850px;
-        margin: 50px auto;
-        background: white;
-        border: 4px solid black;
-        padding: 30px;
-        box-shadow: 10px 10px 0px #000;
-      }
-
-      h1 {
-        font-size: 3rem;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-      }
-
-      textarea {
-        width: 100%;
-        height: 150px;
-        padding: 15px;
-        font-size: 1.1rem;
-        border: 4px solid black;
-        background: #fff;
-        font-family: monospace;
-      }
-
-      button {
-        margin-top: 15px;
-        padding: 15px 25px;
-        font-size: 1.2rem;
-        border: 4px solid black;
-        background: #ffd500;
-        cursor: pointer;
-        width: 100%;
-        text-transform: uppercase;
-        box-shadow: 6px 6px 0px #000;
-      }
-
-      button:hover {
-        background: #e0c200;
-      }
-
-      .result-box {
-        margin-top: 40px;
-        padding: 20px;
-        text-align: left;
-        background: #eaeaea;
-        border: 4px solid black;
-        box-shadow: 6px 6px 0px #000;
-      }
-
-      img {
-        margin-top: 25px;
-        max-width: 100%;
-        border: 4px solid black;
-        box-shadow: 6px 6px 0px #000;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
 
   <body>
+    <!-- Animated stars background -->
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
     <div class="container">
-      <h1>Jungian Dream Visualizer Machine</h1>
+      <div class="header">
+        <h1>✨ Jungian Dream Visualizer ✨</h1>
+        <p class="subtitle">Explore the cosmos of your unconscious mind</p>
+      </div>
 
-      <p>
-        Enter your dream to receive a Jungian interpretation and symbolic
-        visual.
-      </p>
+      <div class="dream-input-card">
+        <h2>🌙 Share Your Dream</h2>
+        <p class="instruction">
+          Describe your dream in detail. Include symbols, emotions, people,
+          settings, and events.
+        </p>
 
-      <form method="POST">
-        <textarea name="prompt" placeholder="Describe your dream..." required>
+        <form method="POST">
+          <textarea
+            name="prompt"
+            placeholder="Last night, I dreamed I was walking through a starlit forest. The trees whispered ancient secrets, and I encountered a luminous figure by a cosmic fountain..."
+            required
+          >
 {{ dream_text }}</textarea
-        >
+          >
 
-        <button type="submit">Analyze Dream</button>
-      </form>
+          <button type="submit" class="cosmic-button">
+            <span class="button-text">Analyze Dream</span>
+            <span class="stars-trail"></span>
+          </button>
+        </form>
+      </div>
 
       {% if result %}
-      <div class="result-box">
-        <h2>Interpretation</h2>
-        <p>{{ result }}</p>
+      <div class="result-card fade-in">
+        <h2>📖 Jungian Interpretation</h2>
+        <div class="interpretation-text">{{ result }}</div>
       </div>
       {% endif %} {% if image %}
-      <div>
-        <h2>Dream Image</h2>
-        <img src="{{ image }}" alt="Generated Dream Image" />
+      <div class="image-card fade-in">
+        <h2>🎨 Visual Manifestation</h2>
+        <div class="image-container">
+          <img
+            src="{{ image }}"
+            alt="Generated Dream Image"
+            class="dream-image"
+          />
+          <div class="image-glow"></div>
+        </div>
+      </div>
+      {% endif %} {% if result or image %}
+      <div class="info-card fade-in">
+        <h3>✨ About Jungian Dream Analysis</h3>
+        <p>
+          Carl Jung believed dreams are messages from the unconscious,
+          containing symbols and archetypes that guide us toward psychological
+          wholeness.
+        </p>
+        <div class="concepts-grid">
+          <div class="concept">
+            <span class="icon"></span>
+            <strong>Archetypes</strong>
+            <p>Universal symbols: Shadow, Anima/Animus, Self</p>
+          </div>
+          <div class="concept">
+            <span class="icon">⚖️</span>
+            <strong>Compensation</strong>
+            <p>Dreams balance conscious attitudes</p>
+          </div>
+          <div class="concept">
+            <span class="icon"></span>
+            <strong>Individuation</strong>
+            <p>Journey toward your true self</p>
+          </div>
+          <div class="concept">
+            <span class="icon"></span>
+            <strong>Collective Unconscious</strong>
+            <p>Shared psychological inheritance</p>
+          </div>
+        </div>
       </div>
       {% endif %}
     </div>
+
+    <footer>
+      <p>
+        Built with OpenAI API • Inspired by Carl Jung's Analytical Psychology
+      </p>
+    </footer>
   </body>
 </html>
