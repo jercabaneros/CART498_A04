@@ -19,7 +19,15 @@
 }
 
 body {
+  /* keeps the gradient as fallback */
   background: linear-gradient(180deg, var(--deep-space) 0%, var(--cosmic-purple) 50%, var(--nebula-blue) 100%);
+  
+  /* bg image */
+  background-image: url("/static/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text-primary);
@@ -38,7 +46,9 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  mix-blend-mode: screen; /*for better blending? */
 }
+
 
 .stars {
   background: transparent;

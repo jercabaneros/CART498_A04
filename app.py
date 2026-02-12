@@ -50,9 +50,9 @@ def index():
             image_prompt = f"Create a surreal, dreamlike, symbolic artistic representation of this dream in the style of Jungian psychology: {dream_text[:500]}. Dreamlike, symbolic, archetypal imagery with rich symbolism. Mystical, cosmic, constellation-like elements."
             
             img_response = client.images.generate(
-                model="dall-e-3",  # FIXED: Use dall-e-3 (gpt-image-1 may not be available)
+                model="dall-e-2",  # ChANGED from dall-e-3 (gpt-image-1 may not be available) to dall-e-2
                 prompt=image_prompt,
-                size="1024x1024",  # Better quality
+                size="512x512",  # Better quality
                 quality="standard",
                 n=1,
                 response_format="b64_json"  # Get base64 directly
