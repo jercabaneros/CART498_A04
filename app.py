@@ -17,10 +17,10 @@ def index():
     if request.method == "POST":
         dream_text = request.form.get("prompt", "")
 
-        # ---- TEXT ANALYSIS (FIXED) ----
+        # ---- TEXT ANALYSIS ----
         try:
             response = client.chat.completions.create(
-                model="gpt-4",  # FIXED: Correct model name
+                model="gpt-4",
                 messages=[
                     {
                         "role": "system",
@@ -33,37 +33,62 @@ def index():
                     },
                     {"role": "user", "content": dream_text}
                 ],
-                max_tokens=400,  # FIXED: Correct parameter name
+                max_tokens=400,
                 temperature=0.7
             )
 
-            # FIXED: Correct way to extract text
             analysis = response.choices[0].message.content
 
         except Exception as e:
             analysis = f"Text analysis failed: {e}"
             print(f"Text error: {e}")
 
-        # ---- IMAGE GENERATION (FIXED) ----
+        # ---- IMAGE GENERATION ----
         try:
-            # Create a more detailed prompt for better images
+            # Create a detailed prompt for better images
             image_prompt = f"Create a surreal, dreamlike, symbolic artistic representation of this dream in the style of Jungian psychology: {dream_text[:500]}. Dreamlike, symbolic, archetypal imagery with rich symbolism. Mystical, cosmic, constellation-like elements."
             
-            img_response = client.images.generate(
-                model="dall-e-2",  # ChANGED from dall-e-3 to dall-e-2
-                prompt=image_prompt,
-                size="512x512",  
-                n=1,
-                response_format="b64_json"  # Get base64 directly
-            )
+            # Try gpt-image-1 first, fall back to gpt-image-1-mini if it fails
+            try:
+                img_response = client.images.generate(
+                    model="gpt-image-1",  # As required by assignment
+                    prompt=image_prompt,
+                    size="512x512",
+                    n=1,
+                    response_format="b64_json"
+                )
+            except Exception as e1:
+                print(f"gpt-image-1 failed, trying gpt-image-1-mini: {e1}")
+                #Try mini version?
+                img_response = client.images.generate(
+                    model="gpt-image-1-mini",  # Fallback as per assignment
+                    prompt=image_prompt,
+                    size="512x512",
+                    n=1,
+                    response_format="b64_json"
+                )
 
-            # FIXED: Extract Base64 correctly
+            # Extract Base64 and convert for display
             image_base64 = img_response.data[0].b64_json
             image_data = f"data:image/png;base64,{image_base64}"
 
         except Exception as e:
             print(f"Image generation failed: {e}")
-            image_data = None
+            # If gpt-image models don't work, fall back to dall-e-2 as last resort (chat api always sends error)
+            try:
+                print("Falling back to dall-e-2...")
+                img_response = client.images.generate(
+                    model="dall-e-2",
+                    prompt=image_prompt,
+                    size="512x512",
+                    n=1,
+                    response_format="b64_json"
+                )
+                image_base64 = img_response.data[0].b64_json
+                image_data = f"data:image/png;base64,{image_base64}"
+            except Exception as e2:
+                print(f"All image generation failed: {e2}")
+                image_data = None
 
     return render_template(
         "index.html",
